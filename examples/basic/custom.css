@@ -1,0 +1,169 @@
+/* Page layout of the example, plus a few overrides of the editor's look. */
+
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+body {
+  margin: 0;
+  background: #f4f4f5;
+  color: #18181b;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.bar h1 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.bar .language {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+.layout {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 0 16px 16px;
+}
+
+.host {
+  display: flex;
+  flex: 0 0 340px;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.host section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.host h2 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.host label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.host label.check {
+  justify-content: flex-start;
+}
+
+.host input[type="number"],
+.host input[type="url"],
+.host input[type="password"],
+.host select {
+  width: 170px;
+  min-width: 0;
+  padding: 4px 6px;
+  font: inherit;
+}
+
+.host table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.host td,
+.host th {
+  padding: 2px;
+  text-align: left;
+}
+
+.host td input {
+  width: 56px !important;
+}
+
+.host td.name {
+  max-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.file input {
+  position: absolute;
+  width: 1px;
+  opacity: 0;
+}
+
+.file {
+  padding: 2px 8px;
+  border: 1px solid #a1a1aa;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.hint {
+  margin: 0;
+  color: #71717a;
+  font-size: 12px;
+}
+
+.log {
+  max-height: 160px;
+  margin: 0;
+  padding-left: 18px;
+  overflow: auto;
+  font-family: ui-monospace, monospace;
+  font-size: 11px;
+}
+
+/* The editor fills its box: give the box a size. */
+.editor {
+  flex: 1 1 600px;
+  min-width: 0;
+  height: calc(100vh - 80px);
+  min-height: 520px;
+}
+
+/* --- Restyling the editor: custom properties first, classes when needed. --- */
+
+#nesting .inn {
+  --inn-accent: #7c3aed;
+  --inn-cut: #0f766e;
+  --inn-toolbar-bg: #1e1b4b;
+  --inn-panel-width: 260px;
+  --inn-radius: 10px;
+}
+
+#nesting .inn-panel__title {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 13px;
+}
+
+@media (max-width: 720px) {
+  .host {
+    flex-basis: 100%;
+  }
+}

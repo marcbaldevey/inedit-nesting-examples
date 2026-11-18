@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Nesting example</title>
+    <link rel="icon" href="data:," />
+    <!-- 1. The editor's default styles, then your own overrides. -->
+    <link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.css" />
+    <link rel="stylesheet" href="./custom.css" />
+  </head>
+  <body>
+    <header class="bar">
+      <h1>Nesting example</h1>
+      <span class="hint">Plain HTML + the script-tag bundle. See docs/GUIDE.md.</span>
+      <label class="language">Editor language
+        <select id="language">
+          <option value="en" selected>English</option>
+          <option value="ca">Català</option>
+          <option value="es">Español</option>
+        </select>
+      </label>
+    </header>
+
+    <main class="layout">
+      <!-- The host page's own form: it decides the items and the parameters, the editor only shows and edits the nest. -->
+      <aside class="host">
+        <section>
+          <h2>Items</h2>
+          <div class="row">
+            <button id="add-samples" type="button">Add sample items</button>
+            <label class="file">Add images… <input id="files" type="file" accept="image/*" multiple /></label>
+          </div>
+          <table id="items">
+            <thead>
+              <tr><th>Item</th><th>Width</th><th>Length</th><th>Copies</th><th></th></tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <p class="hint">Units: cm. Leave the length empty to follow the image proportions.</p>
+        </section>
+
+        <section>
+          <h2>Parameters</h2>
+          <label>Page width (m) <input id="page-width" type="number" value="1.6" min="0.1" step="0.1" /></label>
+          <label>Mode
+            <select id="mode">
+              <option value="rectangular">Rectangular</option>
+              <option value="trueShape" selected>True shape</option>
+            </select>
+          </label>
+          <label>Rotation
+            <select id="rotation">
+              <option value="none">None</option>
+              <option value="flip">0° / 180°</option>
+              <option value="quarter" selected>90° steps</option>
+              <option value="free">Every 15°</option>
+            </select>
+          </label>
+          <label>Padding (mm) <input id="padding" type="number" value="5" min="0" step="1" /></label>
+          <label>Bleed (mm) <input id="bleed" type="number" value="2" min="0" step="1" /></label>
+          <label class="check"><input id="cut-lines" type="checkbox" checked /> Show cut lines</label>
+        </section>
+
+        <section>
+          <h2>Inèdit Connect (PDF)</h2>
+          <label>API URL (…/api) <input id="api-url" type="url" placeholder="https://nreservice.inedit.com/api" value="https://nreservice.inedit.com/api" /></label>
+          <label>Access token <input id="token" type="password" autocomplete="off" placeholder="Bearer token" /></label>
+          <button id="connect" type="button">Use these settings</button>
+          <p class="hint" id="connect-state">Not connected: the editor works, without PDF.</p>
+        </section>
+
+        <section>
+          <h2>Output</h2>
+          <div class="row">
+            <button id="export-json" type="button" disabled>Export JSON</button>
+            <button id="generate-pdf" type="button" disabled>Generate PDF</button>
+          </div>
+          <p class="hint" id="pdf-state"></p>
+          <a id="pdf-link" hidden target="_blank" rel="noopener">Open the PDF</a>
+        </section>
+
+        <section>
+          <h2>Events</h2>
+          <ol id="log" class="log"></ol>
+        </section>
+      </aside>
+
+      <!-- 2. The element the editor fills. It takes the size of this box. -->
+      <div id="nesting" class="editor"></div>
+    </main>
+
+    <!-- 3. The editor bundle: defines window.IneditNesting. -->
+    <!-- The published module, served by Inèdit Connect. -->
+    <script src="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.global.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
