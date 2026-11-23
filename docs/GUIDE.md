@@ -72,8 +72,8 @@ Each version is published as these files:
 ### With a `<script>` tag (no build step)
 
 ```html
-<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.2/nesting.css" />
-<script src="https://nreservice.inedit.com/api/static/nesting/0.1.2/nesting.global.js"></script>
+<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.3/nesting.css" />
+<script src="https://nreservice.inedit.com/api/static/nesting/0.1.3/nesting.global.js"></script>
 <script>
   const { NestingEditor } = window.IneditNesting;
 </script>
@@ -87,7 +87,7 @@ The ES module loads the same way from a `<script type="module">`:
 
 ```html
 <script type="module">
-  import { NestingEditor } from "https://nreservice.inedit.com/api/static/nesting/0.1.2/nesting.js";
+  import { NestingEditor } from "https://nreservice.inedit.com/api/static/nesting/0.1.3/nesting.js";
 </script>
 ```
 
@@ -96,7 +96,7 @@ The ES module loads the same way from a `<script type="module">`:
 Each version is also published as npm packages, at the same address. Install from the URL:
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.2/inedit-nesting-ui-0.1.2.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.3/inedit-nesting-ui-0.1.3.tgz
 # pnpm add … and yarn add … take the same URL
 ```
 
@@ -108,11 +108,12 @@ import "@inedit/nesting-ui/nesting.css";
 `package.json` records the URL, so the version stays pinned; to update, install the URL of the new version. `npm update`
 and version ranges (`^0.1.0`) do not apply to URL installs.
 
-`@inedit/nesting-core` (nesting without the user interface, see [section 10](#10-exporting-the-nest-as-json)) is installed
-along with the editor, or on its own from `…/0.1.2/inedit-nesting-core-0.1.2.tgz`.
+Each package stands alone: it has no dependencies, so it installs the same way with npm, pnpm and yarn. The editor
+already includes the nesting engine. `@inedit/nesting-core` on its own (nesting without the user interface, see
+[section 10](#10-exporting-the-nest-as-json)) is at `…/0.1.3/inedit-nesting-core-0.1.3.tgz`.
 
-For Vue 3 there is a ready-made component, `@inedit/nesting-vue`, at `…/0.1.2/inedit-nesting-vue-0.1.2.tgz`
-(it brings the editor along; see [Vue 3](#vue-3)).
+For Vue 3 there is a ready-made component, `@inedit/nesting-vue`, at `…/0.1.3/inedit-nesting-vue-0.1.3.tgz`
+(it includes the editor; see [Vue 3](#vue-3)).
 
 ## 4. Quick start
 
@@ -741,10 +742,10 @@ export function Nesting({ items, options, onChange }) {
 
 ### Vue 3
 
-Use the Vue component, `@inedit/nesting-vue`. It brings the editor along and loads its CSS:
+Use the Vue component, `@inedit/nesting-vue`. It includes the editor and loads its CSS:
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.2/inedit-nesting-vue-0.1.2.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.3/inedit-nesting-vue-0.1.3.tgz
 ```
 
 ```vue

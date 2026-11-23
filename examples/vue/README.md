@@ -21,7 +21,8 @@ npm install
 npm run dev        # then open the address it prints
 ```
 
-`npm install` downloads the component (and the editor it uses) from Inèdit Connect; see [`package.json`](package.json).
+`npm install` downloads the component, which includes the editor, from Inèdit Connect; see [`package.json`](package.json).
+With pnpm or yarn, install the same way.
 
 The editor works without a token. To generate the PDF, put your Inèdit Connect token in
 [`src/config.js`](src/config.js). The token is then readable by anyone who opens the page: fine for a demo or an

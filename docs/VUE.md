@@ -32,12 +32,13 @@ Vue is a *peer dependency*: the component uses your app's Vue, it does not bring
 ## 2. Installation
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.2/inedit-nesting-vue-0.1.2.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.3/inedit-nesting-vue-0.1.3.tgz
 # pnpm add … and yarn add … take the same URL
 ```
 
-The editor (`@inedit/nesting-ui`) and the nesting engine (`@inedit/nesting-core`) are installed along with it, from
-the same folder. The editor's CSS is loaded by the component: there is nothing else to import.
+The package stands alone: it includes the editor and the nesting engine, and has no dependencies other than your
+app's Vue. The editor's CSS is loaded by the component: there is nothing else to import. (It is also available as
+`@inedit/nesting-vue/nesting.css`, for setups that load stylesheets by hand.)
 
 As with the other packages, `package.json` records the URL, so the version stays pinned. To update, install the URL
 of the new version; `npm update` and version ranges do not apply to URL installs.
@@ -346,6 +347,7 @@ To generate the PDF, put your Inèdit Connect token in [`src/config.js`](../exam
 
 | What you see | Why, and what to do |
 |---|---|
+| pnpm: `ERR_PNPM_EXOTIC_SUBDEP … "@inedit/nesting-ui" (resolved via url) is not allowed in subdependencies` | Versions before 0.1.3 installed the editor from a URL as a dependency, which recent pnpm versions refuse. Install 0.1.3 or later: it has no dependencies. |
 | Nothing is shown, or a thin strip | The component has no height. Give it one: `style="height: 700px"`, or `flex: 1` in a container with a height. |
 | The nest restarts while typing | The field updates `items` on every keystroke. Use `v-model.lazy`. |
 | The pieces moved by hand go back | `items` changed (re-nests from scratch), or `ui`, `render` or `timeBudgetMs` changed (rebuilds the editor). Keep the latter constant. |
