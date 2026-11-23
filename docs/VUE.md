@@ -32,7 +32,7 @@ Vue is a *peer dependency*: the component uses your app's Vue, it does not bring
 ## 2. Installation
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.1/inedit-nesting-vue-0.1.1.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.2/inedit-nesting-vue-0.1.2.tgz
 # pnpm add … and yarn add … take the same URL
 ```
 
@@ -294,16 +294,34 @@ editor would be overwritten on the next change of the props.
 The package includes its types. Everything `@inedit/nesting-ui` exports is also exported from `@inedit/nesting-vue`
 (the plain editor class as `NestingEditorCore`), so one import is enough:
 
-```ts
-import { ref } from "vue";
-import { NestingEditor, type NestingEditorExposed, type NestingEditorItem, type NestingDocument } from "@inedit/nesting-vue";
+```vue
+<script setup lang="ts">
+import { ref, useTemplateRef } from "vue";
+import { NestingEditor, type NestingEditorItem, type NestingDocument } from "@inedit/nesting-vue";
 
-const nesting = ref<NestingEditorExposed | null>(null);
 const items = ref<NestingEditorItem[]>([]);
 const nest = ref<NestingDocument | null>(null);
+const nesting = useTemplateRef("nesting"); // typed: settled(), getDocument(), generatePdf()…
+
+async function exportJson() {
+  await nesting.value?.settled();
+  const document = nesting.value?.getDocument(); // NestingDocument | null | undefined
+}
+</script>
+
+<template>
+  <NestingEditor ref="nesting" :page="{ width: 1.6, units: 'm' }" :items="items" @change="document => (nest = document)" />
+</template>
 ```
 
-`NestingEditorProps` describes the props.
+- Props and events are checked in templates (with `vue-tsc` or the Vue extension of your editor): an unknown unit or
+  mode, a missing `page`, or a `@change` handler expecting something else than a `NestingDocument | null` are errors.
+- The methods of the template ref are typed whichever way you declare it: `useTemplateRef("nesting")`,
+  `ref<InstanceType<typeof NestingEditor> | null>(null)`, or `ref<NestingEditorExposed | null>(null)`.
+- `NestingEditorProps` describes the props and `NestingEditorExposed` the methods.
+- The types do not need CSS module declarations: the package works with `noUncheckedSideEffectImports`.
+
+Versions before 0.1.2 typed the template ref methods only through `NestingEditorExposed`.
 
 ## 10. Server-side rendering (Nuxt)
 
