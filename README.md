@@ -6,16 +6,18 @@ your own web page. It runs entirely in the browser; the print PDF is generated b
 This repository holds the documentation and working examples. The editor itself is served by Inèdit Connect:
 
 ```html
-<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.css" />
-<script src="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.global.js"></script>
+<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.1/nesting.css" />
+<script src="https://nreservice.inedit.com/api/static/nesting/0.1.1/nesting.global.js"></script>
 ```
 
 ## Contents
 
 - **[Integration guide](docs/GUIDE.md)**: installing, items and images, nesting parameters, JSON export,
   generating the PDF, tokens, styling, languages, React and Vue.
+- **[Vue component](docs/VUE.md)**: `@inedit/nesting-vue`, the editor as a Vue 3 component (props, events, recipes).
 - **[examples/minimal](examples/minimal)**: the simplest set-up. Fixed settings in one file, the user only picks copies.
 - **[examples/basic](examples/basic)**: the host page controls everything: items, parameters, JSON, PDF, events and styles.
+- **[examples/vue](examples/vue)**: a Vite + Vue 3 app using the Vue component.
 
 ## Running the examples
 
@@ -28,8 +30,10 @@ npx serve .
 Then open <http://localhost:3000/examples/minimal/> or <http://localhost:3000/examples/basic/>.
 Opening the files directly (`file://`) does not work, because browsers block reading the images from disk.
 
+The Vue example is an npm project: in `examples/vue`, run `npm install` and then `npm run dev`.
+
 Generating the PDF needs an Inèdit Connect account and an access token. Put it in
-[`examples/minimal/config.js`](examples/minimal/config.js), or fill it in on the basic example's page.
+[`examples/minimal/config.js`](examples/minimal/config.js) or [`examples/vue/src/config.js`](examples/vue/src/config.js), or fill it in on the basic example's page.
 **Never commit a real token**, and never put an API token in a public web page: see
 ["Where the token should live"](docs/GUIDE.md#where-the-token-should-live) in the guide.
 

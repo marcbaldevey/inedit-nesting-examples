@@ -72,8 +72,8 @@ Each version is published as these files:
 ### With a `<script>` tag (no build step)
 
 ```html
-<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.css" />
-<script src="https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.global.js"></script>
+<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.1/nesting.css" />
+<script src="https://nreservice.inedit.com/api/static/nesting/0.1.1/nesting.global.js"></script>
 <script>
   const { NestingEditor } = window.IneditNesting;
 </script>
@@ -87,7 +87,7 @@ The ES module loads the same way from a `<script type="module">`:
 
 ```html
 <script type="module">
-  import { NestingEditor } from "https://nreservice.inedit.com/api/static/nesting/0.1.0/nesting.js";
+  import { NestingEditor } from "https://nreservice.inedit.com/api/static/nesting/0.1.1/nesting.js";
 </script>
 ```
 
@@ -96,7 +96,7 @@ The ES module loads the same way from a `<script type="module">`:
 Each version is also published as npm packages, at the same address. Install from the URL:
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.0/inedit-nesting-ui-0.1.0.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.1/inedit-nesting-ui-0.1.1.tgz
 # pnpm add … and yarn add … take the same URL
 ```
 
@@ -109,7 +109,10 @@ import "@inedit/nesting-ui/nesting.css";
 and version ranges (`^0.1.0`) do not apply to URL installs.
 
 `@inedit/nesting-core` (nesting without the user interface, see [section 10](#10-exporting-the-nest-as-json)) is installed
-along with the editor, or on its own from `…/0.1.0/inedit-nesting-core-0.1.0.tgz`.
+along with the editor, or on its own from `…/0.1.1/inedit-nesting-core-0.1.1.tgz`.
+
+For Vue 3 there is a ready-made component, `@inedit/nesting-vue`, at `…/0.1.1/inedit-nesting-vue-0.1.1.tgz`
+(it brings the editor along; see [Vue 3](#vue-3)).
 
 ## 4. Quick start
 
@@ -738,11 +741,38 @@ export function Nesting({ items, options, onChange }) {
 
 ### Vue 3
 
+Use the Vue component, `@inedit/nesting-vue`. It brings the editor along and loads its CSS:
+
+```sh
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.1/inedit-nesting-vue-0.1.1.tgz
+```
+
+```vue
+<script setup>
+import { ref } from "vue";
+import { NestingEditor } from "@inedit/nesting-vue";
+
+const items = ref([{ ref: "logo", name: "Logo", image: "/images/logo.png", width: 20, units: "cm", copies: 10 }]);
+const options = ref({ mode: "trueShape", padding: 5, paddingUnits: "mm" });
+const nest = ref(null); // the NestingDocument
+</script>
+
+<template>
+  <NestingEditor style="height: 700px" :page="{ width: 1.6, units: 'm' }" :items="items" :options="options" @change="document => (nest = document)" />
+</template>
+```
+
+Props follow your state, events come back as Vue events, and a template ref gives `settled()`, `getDocument()`,
+`generatePdf()` and the rest. **Everything about it is in [the Vue component's documentation](VUE.md)**, and
+[`examples/vue`](../examples/vue) is a complete app.
+
+Without the component, the same takes a few lines with the plain editor:
+
 ```vue
 <template><div ref="element" style="height: 700px" /></template>
 
 <script setup>
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref, toRaw, watch } from "vue";
 import { NestingEditor } from "@inedit/nesting-ui";
 import "@inedit/nesting-ui/nesting.css";
 
@@ -752,17 +782,16 @@ const element = ref(null);
 let editor = null;
 
 onMounted(() => {
-  editor = new NestingEditor(element.value, { page: { width: 1.6, units: "m" }, options: props.options, items: props.items });
+  editor = new NestingEditor(element.value, { page: { width: 1.6, units: "m" }, options: toRaw(props.options), items: toRaw(props.items) });
   editor.on("change", ({ document }) => emit("change", document));
 });
-watch(() => props.items, items => editor?.setItems(items));
-watch(() => props.options, options => editor?.setOptions(options), { deep: true });
+watch(() => props.items, items => editor?.setItems(toRaw(items)));
+watch(() => props.options, options => editor?.setOptions(toRaw(options)), { deep: true });
 onBeforeUnmount(() => editor?.destroy());
 </script>
 ```
 
-Pass plain objects to the editor rather than reactive proxies when possible (`toRaw()` in Vue). `File` and `Blob`
-images can be passed as they are.
+Pass plain objects to the editor rather than reactive proxies (`toRaw()`). `File` and `Blob` images can be passed as they are.
 
 ### Anything else
 
@@ -805,6 +834,13 @@ npx serve .             # then open http://localhost:3000/examples/basic/
 In the page, "Add sample items" adds three generated images; "Add images…" adds your own files. To try the PDF, fill in
 your Inèdit Connect API URL (ending in `/api`) and an access token, then "Use these settings".
 
+
+### `examples/vue`: a Vue 3 app
+
+[`examples/vue`](../examples/vue) does with Vue what the two others do with plain JavaScript: the app keeps the
+images, copies, roll width, spacing, rotation and language in its own state and passes them to the
+[`<NestingEditor>` component](VUE.md) as props, with JSON and PDF export. It also lets the user add images from disk.
+It needs Node.js: `npm install` and `npm run dev` in its folder (see its [README](../examples/vue/README.md)).
 
 ## 16. Troubleshooting
 
