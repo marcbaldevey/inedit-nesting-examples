@@ -6,8 +6,8 @@ your own web page. It runs entirely in the browser; the print PDF is generated b
 This repository holds the documentation and working examples. The editor itself is served by Inèdit Connect:
 
 ```html
-<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.3/nesting.css" />
-<script src="https://nreservice.inedit.com/api/static/nesting/0.1.3/nesting.global.js"></script>
+<link rel="stylesheet" href="https://nreservice.inedit.com/api/static/nesting/0.1.4/nesting.css" />
+<script src="https://nreservice.inedit.com/api/static/nesting/0.1.4/nesting.global.js"></script>
 ```
 
 ## Contents

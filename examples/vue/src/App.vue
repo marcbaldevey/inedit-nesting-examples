@@ -39,8 +39,7 @@ const items = computed(() =>
     })),
 );
 
-// Read once, when the editor is created: fixed objects, so they never rebuild it.
-const ui = { panel: false };
+// Read once, when the editor is created: a fixed object, so it never rebuilds the editor.
 const render = { baseUrl: config.connect.url, getToken: () => config.connect.token };
 
 // --- Images added by the user ---
@@ -183,7 +182,6 @@ window.example = { nesting, images, page, options, locale };
       :items="items"
       :options="options"
       :locale="locale"
-      :ui="ui"
       :render="render"
       @change="onChange"
       @computing="computing = $event"

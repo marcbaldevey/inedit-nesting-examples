@@ -4,6 +4,10 @@
 parameters, language) in its own state and passes it as props; the component keeps the editor in step and sends
 what happens back as Vue events.
 
+The component shows the nest and its toolbar (length used, utilization, zoom), not the editor's side panel of
+parameters: **your app provides the controls**, in whatever form suits it, and passes the values as props.
+The panel can still be turned on with `:ui="{ panel: true }"`.
+
 Everything about items, parameters, the `NestingDocument`, the PDF and styling is the same as with the plain editor
 and is described in the [integration guide](GUIDE.md). This page covers only what is specific to Vue.
 
@@ -32,7 +36,7 @@ Vue is a *peer dependency*: the component uses your app's Vue, it does not bring
 ## 2. Installation
 
 ```sh
-npm install https://nreservice.inedit.com/api/static/nesting/0.1.3/inedit-nesting-vue-0.1.3.tgz
+npm install https://nreservice.inedit.com/api/static/nesting/0.1.4/inedit-nesting-vue-0.1.4.tgz
 # pnpm add … and yarn add … take the same URL
 ```
 
@@ -46,17 +50,17 @@ of the new version; `npm update` and version ranges do not apply to URL installs
 ## 3. Quick start
 
 ```vue
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
-import { NestingEditor } from "@inedit/nesting-vue";
+import { NestingEditor, type NestingDocument, type NestingEditorItem, type NestingOptions, type NestingPage } from "@inedit/nesting-vue";
 
-const page = ref({ width: 1.6, units: "m" });
-const options = ref({ mode: "trueShape", allowOrthogonalRotation: true, padding: 5, paddingUnits: "mm" });
-const items = ref([
+const page = ref<NestingPage>({ width: 1.6, units: "m" });
+const options = ref<Partial<NestingOptions>>({ mode: "trueShape", allowOrthogonalRotation: true, padding: 5, paddingUnits: "mm" });
+const items = ref<NestingEditorItem[]>([
   { ref: "logo", name: "Logo", image: "/images/logo.png", width: 20, units: "cm", copies: 10 },
   { ref: "flag", name: "Flag", image: "/images/flag.png", width: 60, length: 40, units: "cm", copies: 2 },
 ]);
-const nest = ref(null);
+const nest = ref<NestingDocument | null>(null);
 </script>
 
 <template>
@@ -72,6 +76,9 @@ const nest = ref(null);
 </template>
 ```
 
+In plain JavaScript (`<script setup>` without `lang="ts"`), drop the `type` imports and the `<…>` after `ref`.
+In TypeScript keep them: see [TypeScript](#9-typescript) for why.
+
 The component fills its own element, so **give it a height** (with `style`, a class, or a flex/grid layout).
 `class`, `style` and any other attribute you put on `<NestingEditor>` go to that element.
 
@@ -84,7 +91,7 @@ The component fills its own element, so **give it a height** (with `style`, a cl
 | `options` | `Partial<NestingOptions>` | yes | Nesting parameters. See [Options](GUIDE.md#options). Missing ones take the editor's defaults. |
 | `locale` | `string` | yes | `"en"` (default), `"ca"`, `"es"`, `"it"` or a language added with `registerLocale`. |
 | `messages` | `Partial<Messages>` | yes | Texts replacing the built-in ones, by key. See [Changing some texts](GUIDE.md#changing-some-texts). |
-| `ui` | `{ editable?, controls?, panel?, theme? }` | rebuilds | The editor's own panel and interaction. See [Configuration reference](GUIDE.md#5-configuration-reference). |
+| `ui` | `{ editable?, panel?, controls?, theme? }` | rebuilds | `panel` is **`false` by default** here (the plain editor shows it): set `true` to add the editor's side panel, `controls` to choose its fields. `editable: false` shows the nest read-only. See [Configuration reference](GUIDE.md#5-configuration-reference). |
 | `render` | `RenderConfig` | rebuilds | Inèdit Connect, to generate the PDF. See [Connecting the editor](GUIDE.md#connecting-the-editor). |
 | `timeBudgetMs` | `number` | rebuilds | Time allowed to search for a shorter nest (default 2500 ms). |
 
@@ -106,8 +113,8 @@ pieces the user moved or rotated by hand. Set these once; there is rarely a reas
   `getToken: () => auth.token` is fine and never rebuilds the editor.
 - **`File` and `Blob` images are passed as they are**, never copied. Reactive proxies are removed before the data reaches
   the editor.
-- **Changes made inside the editor** (the user changing a parameter in its panel, dragging a piece) are *not* written
-  back to your props. Read them from the `change` event if you need them.
+- **Changes made inside the editor** (dragging a piece, or changing a parameter in its panel if you turned it on) are
+  *not* written back to your props. Read them from the `change` event if you need them.
 
 ## 6. Events
 
@@ -146,13 +153,12 @@ const nesting = ref(null);
 
 ## 8. Recipes
 
-### Your own controls instead of the editor's panel
+### Your own controls
 
-Hide the panel and bind your own fields to the props:
+The parameters are props: bind your own fields to them, in whatever form your app needs.
 
 ```vue
 <script setup>
-const ui = { panel: false }; // a constant: it never rebuilds the editor
 const page = ref({ width: 1.6, units: "m" });
 const options = ref({ padding: 5, paddingUnits: "mm", allowOrthogonalRotation: true });
 </script>
@@ -167,11 +173,12 @@ const options = ref({ padding: 5, paddingUnits: "mm", allowOrthogonalRotation: t
   </label>
   <label><input v-model="options.allowOrthogonalRotation" type="checkbox" /> Allow 90° rotation</label>
 
-  <NestingEditor class="editor" :ui="ui" :page="page" :options="options" :items="items" />
+  <NestingEditor class="editor" :page="page" :options="options" :items="items" />
 </template>
 ```
 
-`ui: { panel: false, editable: false }` shows the nest read-only: no panel, no dragging. Zoom and scroll still work.
+`:ui="{ editable: false }"` shows the nest read-only: no dragging or rotating pieces. Zoom and scroll still work.
+`:ui="{ panel: true }"` adds the editor's own panel of parameters, if you prefer it to your own controls.
 
 ### Copies per image
 
@@ -254,7 +261,7 @@ async function exportPdf() {
 ```
 
 Where the token should come from is explained in [Where the token should live](GUIDE.md#where-the-token-should-live).
-With `render` set and the panel shown, the panel also offers its own PDF button.
+With `render` set and `ui.panel` true, the editor's panel also offers its own PDF button.
 
 ### Language
 
@@ -315,6 +322,10 @@ async function exportJson() {
 </template>
 ```
 
+- **Type your refs.** `ref({ width: 1.6, units: "m" })` is inferred as `{ units: string }`, and a `ref(null)` can only
+  ever hold `null`: both are then rejected by the props (`Type 'string' is not assignable to type 'LengthUnit'`,
+  `Type 'NestingDocument | null' is not assignable to type 'null'`). Give the type, as in the example above:
+  `ref<NestingPage>(…)`, `ref<Partial<NestingOptions>>(…)`, `ref<NestingEditorItem[]>(…)`, `ref<NestingDocument | null>(null)`.
 - Props and events are checked in templates (with `vue-tsc` or the Vue extension of your editor): an unknown unit or
   mode, a missing `page`, or a `@change` handler expecting something else than a `NestingDocument | null` are errors.
 - The methods of the template ref are typed whichever way you declare it: `useTemplateRef("nesting")`,
@@ -348,6 +359,7 @@ To generate the PDF, put your Inèdit Connect token in [`src/config.js`](../exam
 | What you see | Why, and what to do |
 |---|---|
 | pnpm: `ERR_PNPM_EXOTIC_SUBDEP … "@inedit/nesting-ui" (resolved via url) is not allowed in subdependencies` | Versions before 0.1.3 installed the editor from a URL as a dependency, which recent pnpm versions refuse. Install 0.1.3 or later: it has no dependencies. |
+| The editor's side panel of parameters appears | Versions before 0.1.4 showed it by default. Update, or pass `:ui="{ panel: false }"`. |
 | Nothing is shown, or a thin strip | The component has no height. Give it one: `style="height: 700px"`, or `flex: 1` in a container with a height. |
 | The nest restarts while typing | The field updates `items` on every keystroke. Use `v-model.lazy`. |
 | The pieces moved by hand go back | `items` changed (re-nests from scratch), or `ui`, `render` or `timeBudgetMs` changed (rebuilds the editor). Keep the latter constant. |
